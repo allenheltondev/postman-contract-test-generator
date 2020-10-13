@@ -25,7 +25,7 @@ Every run, the generator will perform the following actions:
 ## Schema Test Definition
 For every path defined in the Open API Spec, a `json` object will be created in the following format to define the schema test:
 
-```json
+```
 {
   "path": "", // Combines url from server and path
   "parameters": [ ], // All parameters defined at the path
