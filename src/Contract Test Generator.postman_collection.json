@@ -1,0 +1,1097 @@
+{
+	"info": {
+		"_postman_id": "f6c7434c-af8c-4226-bc74-6ba52b2d4811",
+		"name": "Contract Test Generator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "API Validation",
+			"item": [
+				{
+					"name": "Validate API In Workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2762dd3d-a771-4ca4-a7aa-d03970ef1729",
+								"exec": [
+									"const minApiCount = Number(pm.environment.get('env-minApiCount'));\r",
+									"const maxApiCount = Number(pm.environment.get('env-maxApiCount'));\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(`Workspace API count is between ${minApiCount} and ${maxApiCount}. (Count: ${jsonData.apis.length})`, function () {    \r",
+									"    pm.expect(jsonData.apis.length).to.be.at.least(minApiCount);    \r",
+									"    pm.expect(jsonData.apis.length).to.be.at.most(maxApiCount);\r",
+									"});\r",
+									"\r",
+									"let apiIds = [];\r",
+									"_.forEach(jsonData.apis, function(api){\r",
+									"    apiIds.push(api.id);\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set('coll-apiIds', JSON.stringify(apiIds));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Api-Key",
+								"value": "{{env-apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.getpostman.com/apis?workspace={{env-workspaceId}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"getpostman",
+								"com"
+							],
+							"path": [
+								"apis"
+							],
+							"query": [
+								{
+									"key": "workspace",
+									"value": "{{env-workspaceId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current API Version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8efd1879-398d-4fb8-912a-85fa628ca997",
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test('API has one or more versions', function(){\r",
+									"    pm.expect(jsonData).to.have.property('versions').and.to.be.an('array');\r",
+									"    pm.expect(jsonData.versions.length).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"const version = jsonData.versions[0];\r",
+									"pm.collectionVariables.set('coll-versionId', version.id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d686501c-6695-4de0-8124-2dbbcf1229f3",
+								"exec": [
+									"let apiIds = pm.collectionVariables.get('coll-apiIds');\r",
+									"if(apiIds){\r",
+									"    apiIds = JSON.parse(apiIds);\r",
+									"    const apiId = apiIds.pop();\r",
+									"\r",
+									"    pm.collectionVariables.set('coll-apiId', apiId);\r",
+									"    pm.collectionVariables.set('coll-apiIds', JSON.stringify(apiIds));\r",
+									"}\r",
+									"else {\r",
+									"    pm.request.url = 'https://postman-echo.com/delay/0'\r",
+									"    pm.request.name = 'No APIs found in the workspace. Skipping execution';\r",
+									"    postman.setNextRequest(null);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Api-Key",
+								"value": "{{env-apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.getpostman.com/apis/:apiId/versions",
+							"protocol": "https",
+							"host": [
+								"api",
+								"getpostman",
+								"com"
+							],
+							"path": [
+								"apis",
+								":apiId",
+								"versions"
+							],
+							"query": [
+								{
+									"key": null,
+									"value": "",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "apiId",
+									"value": "{{coll-apiId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current API Schema",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9049d48d-b0c4-4977-ac9d-e0fb525b4e9d",
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test('Has schema for current version', function(){\r",
+									"    pm.expect(jsonData).to.have.property('version');\r",
+									"    pm.expect(jsonData.version).to.have.property('schema').and.to.be.an('array');\r",
+									"    pm.expect(jsonData.version.schema.length).to.be.above(0);\r",
+									"\r",
+									"    pm.collectionVariables.set('coll-schemaId', jsonData.version.schema[0]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "feefcbb6-5548-4625-a89b-19e1ac9c843b",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Api-Key",
+								"type": "text",
+								"value": "{{env-apiKey}}"
+							}
+						],
+						"url": {
+							"raw": "https://api.getpostman.com/apis/:apiId/versions/:versionId",
+							"protocol": "https",
+							"host": [
+								"api",
+								"getpostman",
+								"com"
+							],
+							"path": [
+								"apis",
+								":apiId",
+								"versions",
+								":versionId"
+							],
+							"query": [
+								{
+									"key": null,
+									"value": "",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "apiId",
+									"value": "{{coll-apiId}}"
+								},
+								{
+									"key": "versionId",
+									"value": "{{coll-versionId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get API Schema",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2496679a-5edf-479b-a311-9b6aee08435b",
+								"exec": [
+									"try {\r",
+									"    const jsonData = pm.response.json();\r",
+									"\r",
+									"    if(jsonData.schema.language.toLowerCase() == 'json'){\r",
+									"        pm.test('Schema is JSON', function(){\r",
+									"            pm.expect(1).to.equal(1);\r",
+									"        });\r",
+									"    }\r",
+									"    else {\r",
+									"        pm.test('Schema translates to JSON', function(){\r",
+									"            try{\r",
+									"                const yaml = pm.environment.get('env-jsonToYaml');\r",
+									"                (new Function(yaml))();\r",
+									"\r",
+									"                const schema = jsyaml.load(jsonData.schema.schema);\r",
+									"                pm.collectionVariables.set('coll-schema', JSON.stringify(schema));\r",
+									"                pm.expect(1).to.equal(1);\r",
+									"            }\r",
+									"            catch(err){\r",
+									"                pm.expect(1).to.equal(0);\r",
+									"            }    \r",
+									"        });\r",
+									"    }\r",
+									"}\r",
+									"catch(err) {\r",
+									"    console.log(err);\r",
+									"    pm.test('Unable to load schema', function(){\r",
+									"        pm.expect(0).to.equal(1);\r",
+									"        postman.setNextRequest(null);\r",
+									"    })\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Api-Key",
+								"value": "{{env-apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.getpostman.com/apis/:apiId/versions/:apiVersionId/schemas/:schemaId",
+							"protocol": "https",
+							"host": [
+								"api",
+								"getpostman",
+								"com"
+							],
+							"path": [
+								"apis",
+								":apiId",
+								"versions",
+								":apiVersionId",
+								"schemas",
+								":schemaId"
+							],
+							"variable": [
+								{
+									"key": "apiId",
+									"value": "{{coll-apiId}}"
+								},
+								{
+									"key": "apiVersionId",
+									"value": "{{coll-versionId}}"
+								},
+								{
+									"key": "schemaId",
+									"value": "{{coll-schemaId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Components",
+			"item": [
+				{
+					"name": "Verify Component Adherence",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "dc75a134-0d8b-41f0-b565-266474c8a984",
+								"exec": [
+									"const schema = JSON.parse(pm.collectionVariables.get('coll-schema'));\r",
+									"\r",
+									"const requireParamDescription = Boolean(pm.environment.get('env-requireParamDescription'));\r",
+									"const requireParamExample = Boolean(pm.environment.get('env-requireParamExample'));\r",
+									"\r",
+									"let paramDescriptionMinLength = pm.environment.get('env-paramDescriptionMinLength');\r",
+									"if(paramDescriptionMinLength){\r",
+									"    paramDescriptionMinLength = Number(paramDescriptionMinLength);\r",
+									"}\r",
+									"\r",
+									"let paramDescriptionMaxLength = pm.environment.get('env-paramDesciptionMaxLength');\r",
+									"if(paramDescriptionMaxLength){\r",
+									"    paramDescriptionMaxLength = Number(paramDescriptionMaxLength);\r",
+									"}\r",
+									"\r",
+									"for(let prop in schema.components.parameters){\r",
+									"    let parameter = schema.components.parameters[prop];\r",
+									"\r",
+									"    pm.test(`Parameter '${prop}' starts with a lowercase letter`, function(){\r",
+									"        pm.expect(prop.charAt(0)).to.equal(prop.charAt(0).toLowerCase());\r",
+									"    });\r",
+									"\r",
+									"    if(requireParamDescription){\r",
+									"        pm.test(`Parameter '${prop}' has a description between ${paramDescriptionMinLength} and ${paramDescriptionMaxLength} characters`, function(){\r",
+									"           pm.expect(parameter).to.have.property('description').and.to.be.a('string');\r",
+									"           pm.expect(parameter.description.length).to.be.at.least(paramDescriptionMinLength);\r",
+									"           pm.expect(parameter.description.length).to.be.at.most(paramDescriptionMaxLength); \r",
+									"        });\r",
+									"    }\r",
+									"\r",
+									"    if(requireParamExample){\r",
+									"        pm.test(`Parameter '${prop}' has an example`, function(){\r",
+									"            pm.expect(parameter).to.have.property('schema');\r",
+									"            pm.expect(parameter.schema).to.have.property('example');\r",
+									"        });\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"for(let prop in schema.components.schemas){\r",
+									"    pm.test(`Schema '${prop}' begins with an uppercase letter`, function(){\r",
+									"        pm.expect(prop.charAt(0)).to.equal(prop.charAt(0).toUpperCase());\r",
+									"    });\r",
+									"\r",
+									"    const schemaObject = schema.components.schemas[prop];\r",
+									"    testSchemaObject(schema, schemaObject, prop);\r",
+									"}\r",
+									"\r",
+									"for(let prop in schema.components.responses) {\r",
+									"    pm.test(`Response '${prop}' begins with an uppercase letter`, function(){\r",
+									"        pm.expect(prop.charAt(0)).to.equal(prop.charAt(0).toUpperCase());\r",
+									"    });\r",
+									"\r",
+									"    if(requireParamDescription){\r",
+									"        const response = schema.components.responses[prop];\r",
+									"        pm.test(`Response '${prop}' has a description between ${paramDescriptionMinLength} and ${paramDescriptionMaxLength} characters`, function(){\r",
+									"           pm.expect(response).to.have.property('description').and.to.be.a('string');\r",
+									"           pm.expect(response.description.length).to.be.at.least(paramDescriptionMinLength);\r",
+									"           pm.expect(response.description.length).to.be.at.most(paramDescriptionMaxLength); \r",
+									"        });\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"const server = pm.environment.get('env-server');\r",
+									"pm.test('Environment has test server defined', function(){\r",
+									"    pm.expect(server).to.not.be.undefined;\r",
+									"});\r",
+									"\r",
+									"pm.test('Schema has server/baseUrl defined', function(){\r",
+									"    const servers = schema.servers;\r",
+									"    pm.expect(servers).to.not.be.undefined;\r",
+									"    const serverToTest = servers.find(s => s.description.toLowerCase() == server.toLowerCase());\r",
+									"    pm.expect(serverToTest).to.not.be.undefined;\r",
+									"\r",
+									"    pm.expect(serverToTest).to.have.property('url');\r",
+									"    pm.collectionVariables.set('coll-baseUrl', serverToTest.url);\r",
+									"});\r",
+									"    \r",
+									"function testSchemaObject(schema, object, objectName){\r",
+									"    if(object.type && object.type.toLowerCase() == 'object'){\r",
+									"        if(object.required){\r",
+									"            for(let i = 0; i < object.required.length; i++){\r",
+									"                const requiredProp = object.required[i];\r",
+									"                pm.test(`Schema '${objectName}' has required property '${requiredProp}' defined`, function(){\r",
+									"                    pm.expect(object.properties).to.have.property(requiredProp);\r",
+									"                });\r",
+									"            }\r",
+									"        }\r",
+									"\r",
+									"        for(let prop in object.properties){\r",
+									"            const property = object.properties[prop];\r",
+									"            pm.test(`Schema property '${objectName}.${prop}' is lowercase`, function(){\r",
+									"                pm.expect(prop.charAt(0)).to.equal(prop.charAt(0).toLowerCase());\r",
+									"            });\r",
+									"            \r",
+									"            if(property.type && property.type.toLowerCase() == 'object'){\r",
+									"                testSchemaObject(schema, property, `${objectName}.${prop}`);\r",
+									"            }\r",
+									"            else if (property.type && property.type.toLowerCase() == 'array'){\r",
+									"                testSchemaObject(schema, property, `${objectName}.${prop}(list)`);\r",
+									"            }\r",
+									"            else if(property.oneOf){\r",
+									"                _.forEach(property.oneOf, (oneOf, i) => {\r",
+									"                    testSchemaObject(schema, oneOf, `${objectName}.${prop}(oneOf).${i}`)\r",
+									"                });\r",
+									"            }\r",
+									"            else if (property.allOf){\r",
+									"                _.forEach(property.allOf, (allOf, i) => {\r",
+									"                    testSchemaObject(schema, allOf, `${objectName}.${prop}(allOf).${i}`)\r",
+									"                });\r",
+									"            }\r",
+									"            else if (property.anyOf){\r",
+									"                _.forEach(property.anyOf, (anyOf, i) => {\r",
+									"                    testSchemaObject(schema, anyOf, `${objectName}.${prop}(anyOf).${i}`)\r",
+									"                });\r",
+									"            }\r",
+									"            else {\r",
+									"                if(requireParamDescription && !property.$ref){\r",
+									"                    pm.test(`Schema property '${objectName}.${prop}' has a description between ${paramDescriptionMinLength} and ${paramDescriptionMaxLength} characters`, function(){\r",
+									"                    pm.expect(property).to.have.property('description').and.to.be.a('string');\r",
+									"                    pm.expect(property.description.length).to.be.at.least(paramDescriptionMinLength);\r",
+									"                    pm.expect(property.description.length).to.be.at.most(paramDescriptionMaxLength); \r",
+									"                    });\r",
+									"\r",
+									"                    if(property.description){\r",
+									"                        pm.test(`Schema property '${objectName}.${prop}' description is not just the name`, function(){\r",
+									"                            pm.expect(prop.toLowerCase()).to.not.equal(property.description.toLowerCase());\r",
+									"                        });\r",
+									"                    }\r",
+									"                }\r",
+									"\r",
+									"                if(requireParamExample && !property.$ref){\r",
+									"                    pm.test(`Schema property '${objectName}.${prop}' has an example`, function(){\r",
+									"                        pm.expect(property).to.have.property('example');\r",
+									"                    });\r",
+									"                }\r",
+									"            }\r",
+									"        }\r",
+									"    } \r",
+									"    else if (object.type && object.type.toLowerCase() == 'array') {\r",
+									"        pm.test(`Schema '${objectName}' has items defined`, function(){\r",
+									"            pm.expect(object).to.have.property('items');\r",
+									"        });\r",
+									"\r",
+									"        testSchemaObject(schema, object.items, `${objectName}.list`);\r",
+									"    } \r",
+									"    else if(object.oneOf) {\r",
+									"        for(let i = 0; i < object.oneOf.length; i++){\r",
+									"            const oneOfSchema = object.oneOf[i];\r",
+									"            if(oneOfSchema.$ref){\r",
+									"                const name = getName(oneOfSchema.$ref);\r",
+									"                testSchemaObject(schema, schema.components.schemas[name], `${objectName}[${i}](ref ${name})`);\r",
+									"            }\r",
+									"            else {\r",
+									"                testSchemaObject(schema, oneOfSchema, `${objectName}[${i}]`);\r",
+									"            }\r",
+									"        }\r",
+									"    } else if(object.allOf){\r",
+									"        for(let i = 0; i < object.allOf.length; i++){\r",
+									"            const allOfSchema = object.allOf[i];\r",
+									"            if(allOfSchema.$ref){\r",
+									"                const name = getName(allOfSchema.$ref);\r",
+									"                testSchemaObject(schema, schema.components.schemas[name], `${objectName}[${i}](ref ${name})`);\r",
+									"            } \r",
+									"            else {\r",
+									"                testSchemaObject(schema, allOfSchema, `${objectName}[${i}]`);\r",
+									"            }\r",
+									"        }\r",
+									"    }\r",
+									"    else if(object.$ref){\r",
+									"        const name = getName(object.$ref);\r",
+									"        testSchemaObject(schema, schema.components.schemas[name], objectName);        \r",
+									"    }\r",
+									"    else {\r",
+									"        pm.test(`Schema '${objectName}' has a declared type`, function(){\r",
+									"            pm.expect(object).to.have.property('type');\r",
+									"        });\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"function getName(ref){\r",
+									"    let pieces = ref.split('/');\r",
+									"    return pieces[pieces.length-1];\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://postman-echo.com/delay/0",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"delay",
+								"0"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Contract Tests",
+			"item": [
+				{
+					"name": "Build Schema Tests",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8c380fb0-ccc9-45dc-86e2-20b1413e962d",
+								"exec": [
+									"const schema = JSON.parse(pm.collectionVariables.get('coll-schema'));\r",
+									"\r",
+									"let schemaTests = [];    \r",
+									"for(let prop in schema.paths){\r",
+									"    const updatedPath = replacePathParameters(schema, prop);\r",
+									"    let path = {\r",
+									"        path: `${pm.collectionVariables.get('coll-baseUrl')}${updatedPath}`,\r",
+									"        parameters: schema.paths[prop].parameters,        \r",
+									"    };\r",
+									"\r",
+									"    for(let method in schema.paths[prop]){\r",
+									"        if(method.toLowerCase() == 'parameters'){\r",
+									"            continue;\r",
+									"        }       \r",
+									"\r",
+									"        let currentPath = _.cloneDeep(path);\r",
+									"        currentPath.method = method.toUpperCase(); \r",
+									"        let pathMethod = schema.paths[prop][method];\r",
+									"        let securityExtension = pm.environment.get('env-securityExtensionName');        \r",
+									"        if(securityExtension && pathMethod[securityExtension] && pathMethod[securityExtension].length > 0){\r",
+									"            currentPath.allowedRole = pathMethod[securityExtension][0];\r",
+									"        }\r",
+									"\r",
+									"        const expectedResponses = getExpectedResponses(pathMethod);\r",
+									"        currentPath.responses = expectedResponses;\r",
+									"\r",
+									"        if(pathMethod.requestBody && pathMethod.requestBody.required){\r",
+									"            const bodyModel = getSchemaReference(schema, pathMethod.requestBody.content['application/json'].schema.$ref);\r",
+									"            const models = buildModels(schema, bodyModel);\r",
+									"            const mutations = buildModelMutations(models);\r",
+									"\r",
+									"            mutations.forEach((mutation) => {\r",
+									"                let schemaTest = _.cloneDeep(currentPath);\r",
+									"                Object.assign(schemaTest, mutation);\r",
+									"                schemaTest.name = `${schemaTest.method} - ${updatedPath} - ${schemaTest.description} - SUCCESS: ${schemaTest.success}`;\r",
+									"                schemaTests.push(schemaTest);\r",
+									"            });\r",
+									"        }        \r",
+									"    }\r",
+									"\r",
+									"}\r",
+									"\r",
+									"pm.collectionVariables.set('coll-schemaTests', JSON.stringify(schemaTests));\r",
+									"\r",
+									"//\r",
+									"// Supporting Methods Below\r",
+									"//\r",
+									"function buildModels(schema, object){\r",
+									"  let models = [];\r",
+									"\r",
+									"  if(object['$ref']){\r",
+									"    object = getSchemaReference(schema, object['$ref']);\r",
+									"  }\r",
+									"  \r",
+									"  if(object.type && object.type.toLowerCase() == 'object'){\r",
+									"    if(object.required && object.required.length > 0){ \r",
+									"      models.push({});\r",
+									"      _.forEach(object.required, function(param){\r",
+									"        const property = object.properties[param];\r",
+									"        \r",
+									"        if(property.type && ['string', 'number', 'integer', 'boolean'].includes(property.type.toLowerCase())){\r",
+									"          for(let modelIndex = 0; modelIndex < models.length; modelIndex++){\r",
+									"            let model = models[modelIndex];\r",
+									"            model[param] = property.example;\r",
+									"          }\r",
+									"        }\r",
+									"        else {\r",
+									"          const nestedObjects = buildModels(schema, property);          \r",
+									"          models = addToModels(models, nestedObjects, param);\r",
+									"        }                  \r",
+									"      });\r",
+									"    }\r",
+									"  }\r",
+									"  else if(object.type && object.type.toLowerCase() == 'array'){    \r",
+									"    let items = buildModels(schema, object.items);\r",
+									"    if(Array.isArray(items)){\r",
+									"      for(let i = 0; i < items.length; i++){\r",
+									"        models.push([items[i]]);\r",
+									"      }      \r",
+									"    }\r",
+									"    else {\r",
+									"      models.push([items]);\r",
+									"    }\r",
+									"  }\r",
+									"  else if (object.oneOf){  \r",
+									"    _.forEach(object.oneOf, function(component){\r",
+									"        let items = buildModels(schema, component);        \r",
+									"      models = models.concat(items);\r",
+									"    });    \r",
+									"  }\r",
+									"  else if (object.allOf){\r",
+									"    let pieces = [{}];\r",
+									"    _.forEach(object.allOf, function(component){\r",
+									"        let componentModels = buildModels(schema, component);\r",
+									"        pieces = addToModels(pieces, componentModels);        \r",
+									"    });\r",
+									"    \r",
+									"    models = pieces;\r",
+									"  }\r",
+									"  else if (object.anyOf){\r",
+									"      let pieces = [];\r",
+									"      let combinedPieces = [{}];\r",
+									"      _.forEach(object.anyOf, function(component){\r",
+									"        let componentModels = buildModels(schema, component);\r",
+									"        combinedPieces = addToModels(combinedPieces, componentModels);\r",
+									"        pieces = pieces.concat(componentModels);\r",
+									"      });\r",
+									"\r",
+									"      models = pieces.concat(combinedPieces);\r",
+									"  }\r",
+									"  else {\r",
+									"    // All other options are primitive values\r",
+									"    return object.example;\r",
+									"  }\r",
+									"  return models;\r",
+									"}\r",
+									"\r",
+									"function getSchemaReference(schema, referenceName){  \r",
+									"  const refPieces = referenceName.split('/');\r",
+									"  let reference = schema;\r",
+									"  for(let i = 1; i < refPieces.length; i++){\r",
+									"    reference = reference[refPieces[i]];\r",
+									"  }\r",
+									"\r",
+									"  return reference;  \r",
+									"}\r",
+									"\r",
+									"function addToModels(models, newPieces, name){\r",
+									"  let newModels = [];\r",
+									"  _.forEach(models, function(model){\r",
+									"    _.forEach(newPieces, function(newPiece){\r",
+									"      let newModel = _.cloneDeep(model);\r",
+									"      if(name){\r",
+									"        newModel[name] = newPiece;\r",
+									"      }\r",
+									"      else {\r",
+									"        Object.assign(newModel, newPiece);\r",
+									"      }\r",
+									"      newModels.push(newModel);\r",
+									"    });\r",
+									"  });\r",
+									"\r",
+									"  return newModels;\r",
+									"}\r",
+									"\r",
+									"function buildModelMutations(models){    \r",
+									"  let modelMutations = [];\r",
+									"  _.forEach(models, function(model){  \r",
+									"    addMutation(true, 'Has all required fields', model, modelMutations);\r",
+									"    let mutations = buildMutation(model);\r",
+									"    modelMutations = modelMutations.concat(mutations);\r",
+									"  });\r",
+									"\r",
+									"  return modelMutations;\r",
+									"}\r",
+									"\r",
+									"function buildMutation(model){\r",
+									"  let mutations = [];  \r",
+									"\r",
+									"  for(const [key, value] of Object.entries(model)){\r",
+									"    if(typeof value == 'object'){          \r",
+									"      let nestedMutations = buildMutation(value);\r",
+									"      nestedMutations.forEach((nestedMutation) => {\r",
+									"        let mutation = _.cloneDeep(model);\r",
+									"        mutation[key] = nestedMutation.body;\r",
+									"        addMutation(false, `${nestedMutation.description} in ${key} object`, mutation, mutations);\r",
+									"      });\r",
+									"      \r",
+									"      let mutation = _.cloneDeep(model);\r",
+									"      delete mutation[key];\r",
+									"      addMutation(false, `Missing ${key} object`, mutation, mutations);\r",
+									"\r",
+									"      let emptyMutation = _.cloneDeep(model);\r",
+									"      emptyMutation[key] = {};\r",
+									"      addMutation(false, `Empty ${key} object`, emptyMutation, mutations);\r",
+									"    }\r",
+									"    else {\r",
+									"      if(Array.isArray(value)){\r",
+									"        console.log('probably an error');\r",
+									"      }\r",
+									"      let mutation = _.cloneDeep(model);\r",
+									"      delete mutation[key];\r",
+									"      addMutation(false, `Missing ${key} property`, mutation, mutations);\r",
+									"\r",
+									"      let blankMutation = _.cloneDeep(model);\r",
+									"      blankMutation[key] = '';\r",
+									"      addMutation(false, `Blank ${key} property`, blankMutation, mutations);\r",
+									"    }\r",
+									"  }\r",
+									"\r",
+									"  return mutations;\r",
+									"}\r",
+									"\r",
+									"function addMutation(isSuccess, description, mutation, mutations){\r",
+									"  mutations.push({\r",
+									"    success: isSuccess, \r",
+									"    description: description,\r",
+									"    body: mutation\r",
+									"  });\r",
+									"}\r",
+									"\r",
+									"function replacePathParameters(schema, pathName){\r",
+									"    let replacedPathName = pathName;\r",
+									"    let pathVariableRegex = /{([^}]*)}/g;\r",
+									"    let matches = pathName.match(pathVariableRegex);\r",
+									"    _.forEach(matches, function(match){    \r",
+									"        let paramName = match.substring(1, match.length - 1);\r",
+									"        let parameter = schema.components.parameters[paramName];\r",
+									"        \r",
+									"        let parameterValue = encodeURIComponent(parameter.schema.example);\r",
+									"        replacedPathName = pathName.replace(match, parameterValue);        \r",
+									"    });\r",
+									"\r",
+									"    return replacedPathName;\r",
+									"}\r",
+									"\r",
+									"function getExpectedResponses(pathMethod){\r",
+									"    const responses = [];\r",
+									"        for(const [statusCode, value] of Object.entries(pathMethod.responses)){\r",
+									"            let response = {\r",
+									"                statusCode: Number(statusCode)\r",
+									"            };\r",
+									"\r",
+									"            if(value.$ref){\r",
+									"                response.$ref = value.$ref;                \r",
+									"            }\r",
+									"            else\r",
+									"            {\r",
+									"                if(value.content && value.content['application/json'] && value.content['application/json'].schema){\r",
+									"                    if(value.content['application/json'].schema.$ref){\r",
+									"                       response.$ref = value.content['application/json'].schema.$ref;                        \r",
+									"                    }\r",
+									"                    else {\r",
+									"                       response.schema = value.content['application/json'].schema;\r",
+									"                    }\r",
+									"                }\r",
+									"            }\r",
+									"\r",
+									"            responses.push(response);\r",
+									"        }\r",
+									"    return responses;\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://postman-echo.com/get",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"get"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Request",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0a2bc029-412e-46f5-8ad8-ad0033e89a96",
+								"exec": [
+									"const schema = JSON.parse(pm.collectionVariables.get('coll-schema'));\r",
+									"let schemaTests = JSON.parse(pm.collectionVariables.get('coll-schemaTests'));\r",
+									"\r",
+									"const schemaTest = schemaTests.pop();\r",
+									"pm.collectionVariables.set('coll-schemaTests', JSON.stringify(schemaTests));\r",
+									"pm.variables.set('currentSchemaTest', JSON.stringify(schemaTest));\r",
+									"\r",
+									"pm.request.url = schemaTest.path;\r",
+									"pm.request.method = schemaTest.method;\r",
+									"pm.request.name = schemaTest.name;\r",
+									"pm.variables.set('requestName', schemaTest.name);\r",
+									"\r",
+									"pm.variables.set('body', JSON.stringify(schemaTest.body));\r",
+									"\r",
+									"// Add top level parameters from the path\r",
+									"for(let i = 0; i < schemaTest.parameters.length; i++){\r",
+									"    let param = schemaTest.parameters[i];\r",
+									"    let pieces = param.$ref.split('/');\r",
+									"    const name = pieces[pieces.length-1];\r",
+									"\r",
+									"    const schemaParam = schema.components.parameters[name];\r",
+									"    if(schemaParam.in.toLowerCase() == 'header'){\r",
+									"        let roleHeaderName = pm.environment.get('env-roleHeaderName');\r",
+									"        if(roleHeaderName && schemaParam.name.toLowerCase() == roleHeaderName.toLowerCase()){\r",
+									"            pm.request.headers.upsert({ key: schemaParam.name, value: schemaTest.allowedRole });    \r",
+									"        } \r",
+									"        else {\r",
+									"            pm.request.headers.upsert({ key: schemaParam.name, value: schemaParam.schema.example });\r",
+									"        }\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "c98d1e77-e98b-47d4-b0a0-bc5d822adb42",
+								"exec": [
+									"const schemaTests = JSON.parse(pm.collectionVariables.get('coll-schemaTests'));\r",
+									"if(schemaTests.length > 0){\r",
+									"    postman.setNextRequest('Test Request');\r",
+									"}\r",
+									"\r",
+									"const schemaTest = JSON.parse(pm.variables.get('currentSchemaTest'));\r",
+									"console.log(schemaTest.name);\r",
+									"\r",
+									"pm.test(\"Has expected status code\", function () {\r",
+									"    if(schemaTest.success){\r",
+									"        pm.expect(pm.response.code).to.not.equal(400);\r",
+									"    }\r",
+									"    else {\r",
+									"        pm.response.to.have.status(400);\r",
+									"    }    \r",
+									"});\r",
+									"\r",
+									"const expectedResponse = schemaTest.responses.find(r => r.statusCode == pm.response.code);\r",
+									"pm.test('Status code is allowed', function(){\r",
+									"    pm.expect(expectedResponse).to.exist;\r",
+									"});\r",
+									"\r",
+									"if(expectedResponse){\r",
+									"    pm.test('Has expected response body schema', function(){\r",
+									"        let jsonData = pm.response.json();\r",
+									"\r",
+									"        const Ajv = require('ajv');\r",
+									"        const ajv = new Ajv({allErrors: true,format: false});\r",
+									"        \r",
+									"        if(expectedResponse.$ref){\r",
+									"            const schema = JSON.parse(pm.collectionVariables.get('coll-schema'));\r",
+									"            ajv.addSchema(schema, 'OAS');\r",
+									"\r",
+									"            const valid = ajv.validate({$ref: `OAS${expectedResponse.$ref}`}, jsonData);\r",
+									"            pm.expect(valid).to.be.true;\r",
+									"            if(!valid){\r",
+									"                console.log(ajv.errorsText(valid.errors));\r",
+									"            }\r",
+									"        }\r",
+									"        else if(expectedResponse.schema){\r",
+									"            const validate = ajv.compile(expectedResponse.schema);\r",
+									"            const valid = validate(jsonData);\r",
+									"            pm.expect(valid).to.be.true;\r",
+									"            if(!valid){\r",
+									"                console.log(ajv.errorsText(valid.errors));\r",
+									"            }\r",
+									"        }\r",
+									"        else {\r",
+									"            let emptyBody = true;\r",
+									"            if(pm.response.text()){\r",
+									"                emptyBody = false; \r",
+									"            }\r",
+									"\r",
+									"            pm.expect(emptyBody).to.be.true;\r",
+									"        }\r",
+									"    });\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://postman-echo.com/get",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"get"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Finalize",
+			"item": [
+				{
+					"name": "More APIs to Process?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2398b5cd-798a-4508-aa13-e19c07b834e0",
+								"exec": [
+									"let apis = pm.collectionVariables.get('coll-apiIds');\r",
+									"if(apis){\r",
+									"    try{\r",
+									"        apis = JSON.parse(apis);\r",
+									"        if(apis.length > 0){\r",
+									"            postman.setNextRequest('Validate API Version and Schema Presence');\r",
+									"        }\r",
+									"    }\r",
+									"    catch(err){}    \r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://postman-echo.com/delay/0",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"delay",
+								"0"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "7cef0006-047c-4dba-979a-6b4229c71970",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "16dbf9dd-304e-4018-8132-1a39a1fe71a5",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "3e17e878-84af-43ed-b994-04ed5f876fa6",
+			"key": "coll-apiIds",
+			"value": ""
+		},
+		{
+			"id": "b7027312-626c-4573-953e-a2387591f4c3",
+			"key": "coll-apiId",
+			"value": ""
+		},
+		{
+			"id": "409f69fd-85c0-41c5-9998-b772443f149f",
+			"key": "coll-schemaId",
+			"value": ""
+		},
+		{
+			"id": "1d3c483f-a27d-4aa1-8f44-a3d2af6ecc30",
+			"key": "coll-versionId",
+			"value": ""
+		},
+		{
+			"id": "ab77f3a4-e445-4e6d-8a43-50ace6cf92bf",
+			"key": "coll-schema",
+			"value": ""
+		},
+		{
+			"id": "773c1ed2-ddfd-4acb-8141-bbfc0f57f181",
+			"key": "jwtAuthToken",
+			"value": ""
+		},
+		{
+			"id": "a70864b4-a5a6-4e06-a393-88921f43ceb1",
+			"key": "coll-securityPaths",
+			"value": ""
+		},
+		{
+			"id": "048ca67c-0797-4d89-a10e-068d69dcbe6a",
+			"key": "coll-baseUrl",
+			"value": ""
+		},
+		{
+			"id": "d292e8a8-f622-4472-8bb8-2d8abcdaeb69",
+			"key": "coll-schemaTests",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
