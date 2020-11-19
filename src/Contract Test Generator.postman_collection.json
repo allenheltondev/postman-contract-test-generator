@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f6c7434c-af8c-4226-bc74-6ba52b2d4811",
+		"_postman_id": "a5247974-4824-498e-8735-1d6747f4afe8",
 		"name": "Contract Test Generator",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -9,12 +9,64 @@
 			"name": "API Validation",
 			"item": [
 				{
+					"name": "Initialize",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fa3863ae-5c79-475c-90b6-910a83c1e10f",
+								"exec": [
+									"const providedSchema = pm.environment.get('env-schema');\r",
+									"if(providedSchema){\r",
+									"    let success = true;\r",
+									"    try{\r",
+									"        const yaml = pm.environment.get('env-jsonToYaml');\r",
+									"        (new Function(yaml))();\r",
+									"\r",
+									"        const schema = jsyaml.load(providedSchema);\r",
+									"        pm.collectionVariables.set('coll-schema', JSON.stringify(schema));\r",
+									"        postman.setNextRequest('Verify Component Adherence');\r",
+									"    }\r",
+									"    catch(err){\r",
+									"        console.log(err);\r",
+									"        success = false;\r",
+									"        postman.setNextRequest(null);\r",
+									"    }\r",
+									"\r",
+									"    pm.test('Successfully converted provided schema', function(){\r",
+									"        pm.expect(success).to.be.true;\r",
+									"    });    \r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://postman-echo.com/delay/0",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"delay",
+								"0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Validate API In Workspace",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "2762dd3d-a771-4ca4-a7aa-d03970ef1729",
+								"id": "ce0eb858-4436-4e97-81a0-cdd71738cb93",
 								"exec": [
 									"const minApiCount = Number(pm.environment.get('env-minApiCount'));\r",
 									"const maxApiCount = Number(pm.environment.get('env-maxApiCount'));\r",
@@ -75,7 +127,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8efd1879-398d-4fb8-912a-85fa628ca997",
+								"id": "0bbeed26-bb61-42ff-91e0-327b39023802",
 								"exec": [
 									"const jsonData = pm.response.json();\r",
 									"\r",
@@ -93,7 +145,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d686501c-6695-4de0-8124-2dbbcf1229f3",
+								"id": "ac5a804b-ae8b-4509-8675-6f56ba2b75d7",
 								"exec": [
 									"let apiIds = pm.collectionVariables.get('coll-apiIds');\r",
 									"if(apiIds){\r",
@@ -147,8 +199,10 @@
 							],
 							"variable": [
 								{
+									"id": "ec7ddbf3-e561-4a3f-95d0-33d4ed56706b",
 									"key": "apiId",
-									"value": "{{coll-apiId}}"
+									"value": "{{coll-apiId}}",
+									"type": "string"
 								}
 							]
 						}
@@ -161,7 +215,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9049d48d-b0c4-4977-ac9d-e0fb525b4e9d",
+								"id": "e76a78a3-b2d8-42ee-9afd-905bff8c4567",
 								"exec": [
 									"const jsonData = pm.response.json();\r",
 									"\r",
@@ -179,7 +233,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "feefcbb6-5548-4625-a89b-19e1ac9c843b",
+								"id": "29f1f8c4-8ff4-4fe3-8ffc-0f0ee1a01bcb",
 								"exec": [
 									""
 								],
@@ -222,12 +276,16 @@
 							],
 							"variable": [
 								{
+									"id": "3a652b95-179d-4d79-8a2a-cf6f6d773574",
 									"key": "apiId",
-									"value": "{{coll-apiId}}"
+									"value": "{{coll-apiId}}",
+									"type": "string"
 								},
 								{
+									"id": "44b9f64e-26e5-4e84-a01d-8af854e36bb3",
 									"key": "versionId",
-									"value": "{{coll-versionId}}"
+									"value": "{{coll-versionId}}",
+									"type": "string"
 								}
 							]
 						}
@@ -240,7 +298,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2496679a-5edf-479b-a311-9b6aee08435b",
+								"id": "815adc22-30f8-4ee5-b191-b981c91195f3",
 								"exec": [
 									"try {\r",
 									"    const jsonData = pm.response.json();\r",
@@ -261,7 +319,7 @@
 									"                pm.expect(1).to.equal(1);\r",
 									"            }\r",
 									"            catch(err){\r",
-									"                pm.expect(1).to.equal(0);\r",
+									"                pm.expect(`${err.name} - ${err.message}`).to.equal(undefined);\r",
 									"            }    \r",
 									"        });\r",
 									"    }\r",
@@ -308,16 +366,22 @@
 							],
 							"variable": [
 								{
+									"id": "4b4aeb87-a23d-4854-a138-e2b5e4598fc6",
 									"key": "apiId",
-									"value": "{{coll-apiId}}"
+									"value": "{{coll-apiId}}",
+									"type": "string"
 								},
 								{
+									"id": "866f1243-a6cb-40d6-9d01-1c525917d6c7",
 									"key": "apiVersionId",
-									"value": "{{coll-versionId}}"
+									"value": "{{coll-versionId}}",
+									"type": "string"
 								},
 								{
+									"id": "15ae8224-08bb-4b13-8264-4d9b8af7b81a",
 									"key": "schemaId",
-									"value": "{{coll-schemaId}}"
+									"value": "{{coll-schemaId}}",
+									"type": "string"
 								}
 							]
 						}
@@ -336,7 +400,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "dc75a134-0d8b-41f0-b565-266474c8a984",
+								"id": "af7ddb7e-edfd-4e8e-b52c-3ff5f2de0a74",
 								"exec": [
 									"const schema = JSON.parse(pm.collectionVariables.get('coll-schema'));\r",
 									"\r",
@@ -352,6 +416,8 @@
 									"if(paramDescriptionMaxLength){\r",
 									"    paramDescriptionMaxLength = Number(paramDescriptionMaxLength);\r",
 									"}\r",
+									"\r",
+									"var testedSchemaRefs = [];\r",
 									"\r",
 									"for(let prop in schema.components.parameters){\r",
 									"    let parameter = schema.components.parameters[prop];\r",
@@ -381,8 +447,12 @@
 									"        pm.expect(prop.charAt(0)).to.equal(prop.charAt(0).toUpperCase());\r",
 									"    });\r",
 									"\r",
-									"    const schemaObject = schema.components.schemas[prop];\r",
-									"    testSchemaObject(schema, schemaObject, prop);\r",
+									"    const testedSchema = testedSchemaRefs.find(tsr => tsr == prop);\r",
+									"    if(!testedSchema){\r",
+									"        const schemaObject = schema.components.schemas[prop];\r",
+									"        testSchemaObject(schema, schemaObject, prop);\r",
+									"        testedSchemaRefs.push(prop);\r",
+									"    }\r",
 									"}\r",
 									"\r",
 									"for(let prop in schema.components.responses) {\r",
@@ -484,36 +554,42 @@
 									"        testSchemaObject(schema, object.items, `${objectName}.list`);\r",
 									"    } \r",
 									"    else if(object.oneOf) {\r",
-									"        for(let i = 0; i < object.oneOf.length; i++){\r",
-									"            const oneOfSchema = object.oneOf[i];\r",
-									"            if(oneOfSchema.$ref){\r",
-									"                const name = getName(oneOfSchema.$ref);\r",
-									"                testSchemaObject(schema, schema.components.schemas[name], `${objectName}[${i}](ref ${name})`);\r",
-									"            }\r",
-									"            else {\r",
-									"                testSchemaObject(schema, oneOfSchema, `${objectName}[${i}]`);\r",
-									"            }\r",
-									"        }\r",
+									"        handleSchemaArray(schema, object, objectName, 'oneOf');        \r",
 									"    } else if(object.allOf){\r",
-									"        for(let i = 0; i < object.allOf.length; i++){\r",
-									"            const allOfSchema = object.allOf[i];\r",
-									"            if(allOfSchema.$ref){\r",
-									"                const name = getName(allOfSchema.$ref);\r",
-									"                testSchemaObject(schema, schema.components.schemas[name], `${objectName}[${i}](ref ${name})`);\r",
-									"            } \r",
-									"            else {\r",
-									"                testSchemaObject(schema, allOfSchema, `${objectName}[${i}]`);\r",
-									"            }\r",
-									"        }\r",
+									"        handleSchemaArray(schema, object, objectName, 'allOf');       \r",
+									"    }\r",
+									"    else if(object.anyOf){\r",
+									"        handleSchemaArray(schema, object, objectName, 'anyOf');\r",
 									"    }\r",
 									"    else if(object.$ref){\r",
 									"        const name = getName(object.$ref);\r",
-									"        testSchemaObject(schema, schema.components.schemas[name], objectName);        \r",
+									"        const testedRef = testedSchemaRefs.find(tsr => tsr == name);\r",
+									"        if(!testedRef){            \r",
+									"            testSchemaObject(schema, schema.components.schemas[name], objectName);\r",
+									"            testedSchemaRefs.push(name);\r",
+									"        }\r",
 									"    }\r",
 									"    else {\r",
 									"        pm.test(`Schema '${objectName}' has a declared type`, function(){\r",
 									"            pm.expect(object).to.have.property('type');\r",
 									"        });\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"function handleSchemaArray(schema, object, objectName, arrayType){\r",
+									"    for(let i = 0; i < object[arrayType].length; i++){\r",
+									"        const arraySchema = object[arrayType][i];\r",
+									"        if(arraySchema.$ref){\r",
+									"            const name = getName(arraySchema.$ref);\r",
+									"            const testedRef = testedSchemaRefs.find(tsr => tsr == name);\r",
+									"            if(!testedRef){\r",
+									"                testSchemaObject(schema, schema.components.schemas[name], `${objectName}[${i}](ref ${name})`);\r",
+									"                testedSchemaRefs.push(name);\r",
+									"            }\r",
+									"        } \r",
+									"        else {\r",
+									"            testSchemaObject(schema, arraySchema, `${objectName}[${i}]`);\r",
+									"        }\r",
 									"    }\r",
 									"}\r",
 									"\r",
@@ -560,7 +636,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8c380fb0-ccc9-45dc-86e2-20b1413e962d",
+								"id": "6a575204-b156-42d1-acd3-ae0ddd02b231",
 								"exec": [
 									"const schema = JSON.parse(pm.collectionVariables.get('coll-schema'));\r",
 									"\r",
@@ -588,7 +664,7 @@
 									"        const expectedResponses = getExpectedResponses(pathMethod);\r",
 									"        currentPath.responses = expectedResponses;\r",
 									"\r",
-									"        if(pathMethod.requestBody && pathMethod.requestBody.required){\r",
+									"        if(pathMethod.requestBody){\r",
 									"            const bodyModel = getSchemaReference(schema, pathMethod.requestBody.content['application/json'].schema.$ref);\r",
 									"            const models = buildModels(schema, bodyModel);\r",
 									"            const mutations = buildModelMutations(models);\r",
@@ -600,8 +676,12 @@
 									"                schemaTests.push(schemaTest);\r",
 									"            });\r",
 									"        }        \r",
+									"        else {\r",
+									"            currentPath.name = `${currentPath.method} - ${updatedPath} - No Request Body - SUCCESS: true`;\r",
+									"            currentPath.success = true;\r",
+									"            schemaTests.push(currentPath);\r",
+									"        }\r",
 									"    }\r",
-									"\r",
 									"}\r",
 									"\r",
 									"pm.collectionVariables.set('coll-schemaTests', JSON.stringify(schemaTests));\r",
@@ -772,7 +852,7 @@
 									"        let parameter = schema.components.parameters[paramName];\r",
 									"        \r",
 									"        let parameterValue = encodeURIComponent(parameter.schema.example);\r",
-									"        replacedPathName = pathName.replace(match, parameterValue);        \r",
+									"        replacedPathName = replacedPathName.replace(match, parameterValue);        \r",
 									"    });\r",
 									"\r",
 									"    return replacedPathName;\r",
@@ -816,14 +896,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://postman-echo.com/get",
+							"raw": "https://postman-echo.com/delay/0",
 							"protocol": "https",
 							"host": [
 								"postman-echo",
 								"com"
 							],
 							"path": [
-								"get"
+								"delay",
+								"0"
 							]
 						}
 					},
@@ -835,7 +916,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "0a2bc029-412e-46f5-8ad8-ad0033e89a96",
+								"id": "1c9ef3f4-87bd-4db5-a176-8e1f34911603",
 								"exec": [
 									"const schema = JSON.parse(pm.collectionVariables.get('coll-schema'));\r",
 									"let schemaTests = JSON.parse(pm.collectionVariables.get('coll-schemaTests'));\r",
@@ -876,7 +957,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c98d1e77-e98b-47d4-b0a0-bc5d822adb42",
+								"id": "ba1e9e47-8138-4e22-9091-7d41d2a94316",
 								"exec": [
 									"const schemaTests = JSON.parse(pm.collectionVariables.get('coll-schemaTests'));\r",
 									"if(schemaTests.length > 0){\r",
@@ -886,7 +967,7 @@
 									"const schemaTest = JSON.parse(pm.variables.get('currentSchemaTest'));\r",
 									"console.log(schemaTest.name);\r",
 									"\r",
-									"pm.test(\"Has expected status code\", function () {\r",
+									"pm.test(`${schemaTest.name} - Has expected status code`, function () {\r",
 									"    if(schemaTest.success){\r",
 									"        pm.expect(pm.response.code).to.not.equal(400);\r",
 									"    }\r",
@@ -902,40 +983,48 @@
 									"\r",
 									"if(expectedResponse){\r",
 									"    pm.test('Has expected response body schema', function(){\r",
-									"        let jsonData = pm.response.json();\r",
-									"\r",
 									"        const Ajv = require('ajv');\r",
 									"        const ajv = new Ajv({allErrors: true,format: false});\r",
 									"        \r",
-									"        if(expectedResponse.$ref){\r",
+									"        if(pm.response.code == 204){\r",
+									"            checkForEmptyResponse();\r",
+									"        }\r",
+									"        else if(expectedResponse.$ref){\r",
+									"            const jsonData = pm.response.json();\r",
 									"            const schema = JSON.parse(pm.collectionVariables.get('coll-schema'));\r",
 									"            ajv.addSchema(schema, 'OAS');\r",
-									"\r",
+									"            \r",
 									"            const valid = ajv.validate({$ref: `OAS${expectedResponse.$ref}`}, jsonData);\r",
-									"            pm.expect(valid).to.be.true;\r",
-									"            if(!valid){\r",
-									"                console.log(ajv.errorsText(valid.errors));\r",
+									"            const errors = ajv.errorsText(valid.errors);\r",
+									"            pm.expect(errors).to.equal('No errors');\r",
+									"            if(errors !== 'No errors'){\r",
+									"                console.log(errors);\r",
 									"            }\r",
 									"        }\r",
 									"        else if(expectedResponse.schema){\r",
+									"            const jsonData = pm.response.json();\r",
 									"            const validate = ajv.compile(expectedResponse.schema);\r",
 									"            const valid = validate(jsonData);\r",
-									"            pm.expect(valid).to.be.true;\r",
-									"            if(!valid){\r",
-									"                console.log(ajv.errorsText(valid.errors));\r",
+									"            const errors = ajv.errorsText(valid.errors);\r",
+									"            pm.expect(errors).to.equal('No errors');\r",
+									"            if(errors !== 'No errors'){\r",
+									"                console.log(errors);\r",
 									"            }\r",
 									"        }\r",
 									"        else {\r",
-									"            let emptyBody = true;\r",
-									"            if(pm.response.text()){\r",
-									"                emptyBody = false; \r",
-									"            }\r",
-									"\r",
-									"            pm.expect(emptyBody).to.be.true;\r",
+									"            checkForEmptyResponse();\r",
 									"        }\r",
 									"    });\r",
 									"}\r",
-									""
+									"\r",
+									"function checkForEmptyResponse() {\r",
+									"    let emptyBody = true;\r",
+									"    if(pm.response.text()){\r",
+									"        emptyBody = false; \r",
+									"    }\r",
+									"\r",
+									"    pm.expect(emptyBody).to.be.true;\r",
+									"}"
 								],
 								"type": "text/javascript"
 							}
@@ -982,7 +1071,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2398b5cd-798a-4508-aa13-e19c07b834e0",
+								"id": "d4584371-862d-4b30-bc07-1152278797af",
 								"exec": [
 									"let apis = pm.collectionVariables.get('coll-apiIds');\r",
 									"if(apis){\r",
@@ -1028,7 +1117,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "7cef0006-047c-4dba-979a-6b4229c71970",
+				"id": "b0d0c9e7-ba66-4042-9fff-31e01184e37e",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1038,7 +1127,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "16dbf9dd-304e-4018-8132-1a39a1fe71a5",
+				"id": "00cbef88-c15d-4e33-bd27-6c9770b13f7e",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1048,49 +1137,44 @@
 	],
 	"variable": [
 		{
-			"id": "3e17e878-84af-43ed-b994-04ed5f876fa6",
+			"id": "4e559009-78dc-40b7-98af-690554eecdc5",
 			"key": "coll-apiIds",
-			"value": ""
+			"value": "[]"
 		},
 		{
-			"id": "b7027312-626c-4573-953e-a2387591f4c3",
+			"id": "e4c5ae6a-7b6d-41a4-addb-aecc23d70daa",
 			"key": "coll-apiId",
 			"value": ""
 		},
 		{
-			"id": "409f69fd-85c0-41c5-9998-b772443f149f",
+			"id": "784e654d-2299-4dbf-b117-cfbfadb11f97",
 			"key": "coll-schemaId",
 			"value": ""
 		},
 		{
-			"id": "1d3c483f-a27d-4aa1-8f44-a3d2af6ecc30",
+			"id": "fa2a17e6-4dd2-48de-8448-1ab43a8f9824",
 			"key": "coll-versionId",
 			"value": ""
 		},
 		{
-			"id": "ab77f3a4-e445-4e6d-8a43-50ace6cf92bf",
+			"id": "d381bfc2-8b00-438a-992d-6fa9e54b4064",
 			"key": "coll-schema",
 			"value": ""
 		},
 		{
-			"id": "773c1ed2-ddfd-4acb-8141-bbfc0f57f181",
-			"key": "jwtAuthToken",
-			"value": ""
-		},
-		{
-			"id": "a70864b4-a5a6-4e06-a393-88921f43ceb1",
+			"id": "0a8cdfab-9bb2-48b4-bbdc-617f159825f4",
 			"key": "coll-securityPaths",
-			"value": ""
+			"value": "[]"
 		},
 		{
-			"id": "048ca67c-0797-4d89-a10e-068d69dcbe6a",
+			"id": "a9d1ffab-e7ac-4b1b-ba92-b0bddae84bdd",
 			"key": "coll-baseUrl",
 			"value": ""
 		},
 		{
-			"id": "d292e8a8-f622-4472-8bb8-2d8abcdaeb69",
+			"id": "3ad4e156-18cc-4016-8acf-acc901075c37",
 			"key": "coll-schemaTests",
-			"value": ""
+			"value": "[]"
 		}
 	],
 	"protocolProfileBehavior": {}
