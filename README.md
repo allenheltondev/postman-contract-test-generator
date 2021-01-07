@@ -158,6 +158,88 @@ In this repo there are two files you need to import into your [Postman](https://
 
 If you are unsure how to import these into Postman, please [refer to this guide](https://kb.datamotion.com/?ht_kb=postman-instructions-for-exporting-and-importing).
 
+# Extensions
+If you wish to use extensions with your Open API Spec to assist with the test generation, see details below for supported extensions:
+
+## x-amazon-apigateway-integration
+If you use AWS API Gateway and practice [API-first development](https://www.readysetcloud.io/blog/allen.helton/api-first-development-with-postman/), chances are you use the [x-amazon-apigateway-integration extension](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html). This extension allows you to identify how each endpoint proxies to an AWS service. For API-first development, you are able to to mock out the proxy and response for endpoints that are not implemented yet. 
+
+When using this extension, you can add the following snippet to tell API Gateway to mock out the response.
+```yaml
+x-amazon-apigateway-integration:
+  responses:
+    200:
+      statusCode: 200
+  passthroughBehavior: when_no_match
+  requestTemplates:
+    application/json: |
+      {
+        'statusCode': 200
+      }
+  type: mock
+```
+
+The generator will skip over any endpoint methods that have `type: mock` defined in this extension. No tests will be run for mocked endpoints.
+
+## x-postman-variables
+Instead of relying completely on seeded, or known, data in the system for the generated tests, this extension allows you to use objects created in the generated tests in subsequent tests. For example, if you have an endpoint that creates a `book` object by doing a **POST** to `/books`, this extension will allow you to save the returned id as a collection variable and use it in other API calls, like doing a **GET** on `/books/{bookId}`.
+
+**Saving a variable**
+In the `responses` section of an endpoint method you can add the following snippet to save a collection variable.
+```yaml
+responses:
+  201:
+    $ref: `#/components/responses/Created`
+    x-postman-variables:
+      - type: save
+        name: bookId
+        path: .id
+```
+
+`type` - Must be *save* in order to save the value to a collection variable
+`name` - What to name the collection variable
+`path` - Json-path to the property you want. Currently does not support arrays. It must start with a '.'
+
+The extension is an array, so you can add as many saves as you'd like. 
+
+**Consuming a variable**
+The extension must be added to a parameter for consumption. This could be a header, query param, or path param. It works with both inline and ref parameters.
+```yaml
+parameters:
+  bookId:
+      name: bookId
+      in: path
+      description: Unique identifier for the book
+      required: true
+      schema:
+        type: string
+        example: 23SovYJfRZ5Wt7jpZEPHVo
+      x-postman-variables:
+        - type: load
+          name: bookId
+```
+
+Whenever this parameter is used, the test generator will load the value from the collection variable. If the collection variable does not exist or has no value, it will fall back to the provided example.
+
+# Environment
+Below is a list of environment variables currently consumed by the generator:
+
+* `env-apiKey` - Your Postman API key used to access the Postman API
+* `env-minApiCount` - The minimum amount of APIs required in a provided workspace
+* `env-maxApiCount` - The maximum amount of APIs required in a provided workspace
+* `env-workspaceId` - The identifier of the workspace you wish to generate tests for
+* `env-requireParamDescription` - Flag denoting if assertions should be run that require a parameter description - **BOOLEAN**
+* `env-requireParamExample` - Flag denoting if assertions should be run that require a parameter example - **BOOLEAN**
+* `env-paramDescriptionMinLength` - The minimum length a description should be. This is only used if `env-requireParamDescription` is true
+* `env-paramDesciptionMaxLength` - The maximum length a description should be. This is only used if `env-requireParamDescription` is true
+* `env-securityExtensionName` - If using a role-based API, the name of the extension you use to denote allowed roles on an endpoint
+* `env-roleHeaderName` - If using a role-based API, the name of the header where you supply the user's assumed role
+* `env-server` - The description of which `server` element to use. This is for the base url of your API. [See OAS Documentation](https://swagger.io/docs/specification/api-host-and-base-path/)
+* `env-runComponentTests` - Flag denoting if assertions should be run validating schema adherence - **BOOLEAN**
+* `env-runContractTests` - Flag denoting if contract tests should be generated and run - **BOOLEAN**
+* `env-schemaPropertyExceptions` - The names of any properties that should not be validated in the component tests - **ARRAY OF STRINGS**
+* `env-jsonToYaml` - NPM Package that converts yaml to json. DO NOT EDIT!
+
 # Contact
 You may contact me by any of the social media channels below:
 
