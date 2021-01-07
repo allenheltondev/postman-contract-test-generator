@@ -185,6 +185,7 @@ The generator will skip over any endpoint methods that have `type: mock` defined
 Instead of relying completely on seeded, or known, data in the system for the generated tests, this extension allows you to use objects created in the generated tests in subsequent tests. For example, if you have an endpoint that creates a `book` object by doing a **POST** to `/books`, this extension will allow you to save the returned id as a collection variable and use it in other API calls, like doing a **GET** on `/books/{bookId}`.
 
 **Saving a variable**
+
 In the `responses` section of an endpoint method you can add the following snippet to save a collection variable.
 ```yaml
 responses:
