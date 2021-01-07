@@ -204,6 +204,7 @@ responses:
 The extension is an array, so you can add as many saves as you'd like. 
 
 **Consuming a variable**
+
 The extension must be added to a parameter for consumption. This could be a header, query param, or path param. It works with both inline and ref parameters.
 ```yaml
 parameters:
