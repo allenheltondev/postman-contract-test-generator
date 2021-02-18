@@ -158,6 +158,21 @@ In this repo there are two files you need to import into your [Postman](https://
 
 If you are unsure how to import these into Postman, please [refer to this guide](https://kb.datamotion.com/?ht_kb=postman-instructions-for-exporting-and-importing).
 
+# CI Pipeline / Automation
+To run this as part of a CI pipeline, [Newman](https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman) a command line interface from Postman can be used to execute the collection.
+
+The collection runs as a single command with overridden environment variables. As many of the [environment variables](#Environment) can be overridden as you'd like, just keep adding the `--env-var` flag to the command to override variables. 
+
+Below is an example of a completely genericized Newman execution. This command will pull from variables in the CI environment (all variables with a `$` come from CI) and substitute them in the command.
+
+```
+newman run https://api.getpostman.com/collections/$POSTMAN_TEST_GENERATION_COLLECTION_ID?apikey=$POSTMAN_API_KEY --environment https://api.getpostman.com/environments/$POSTMAN_TEST_GENERATION_ENVIRONMENT_ID?apikey=$POSTMAN_API_KEY --env-var "env-workspaceId=$POSTMAN_WORKSPACE_ID" --env-var "env-server=$POSTMAN_TEST_ENVIRONMENT"
+```
+
+This command offers maximum portability, offering the user the ability to import the collection and environment into their Postman workspace one time and reuse it for all APIs they own by simply replacing environment variables.
+
+Newman will return the appropriate exit code if any assertions fail, which will automatically cause your build pipeline to fail.
+
 # Extensions
 If you wish to use extensions with your Open API Spec to assist with the test generation, see details below for supported extensions:
 
