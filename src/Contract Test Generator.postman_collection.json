@@ -297,6 +297,7 @@
 									"        pm.test('Schema is JSON', function(){\r",
 									"            pm.expect(1).to.equal(1);\r",
 									"        });\r",
+									"        pm.collectionVariables.set('coll-schema', jsonData.schema.schema);\r",
 									"    }\r",
 									"    else {\r",
 									"        pm.test('Schema translates to JSON', function(){\r",
