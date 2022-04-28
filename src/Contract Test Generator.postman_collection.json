@@ -1035,7 +1035,7 @@
 									"            const paramValue = loadParameterValue(param);\r",
 									"            if (paramType == 'header') {\r",
 									"                pm.request.headers.upsert({ key: param.name, value: paramValue });\r",
-									"            } else if (paramType == 'query' && schemaParam.required == true) {\r",
+									"            } else if (paramType == 'query' && param.required == true) {\r",
 									"                pm.request.url.query.upsert({ key: param.name, value: paramValue });\r",
 									"            }\r",
 									"        }\r",
