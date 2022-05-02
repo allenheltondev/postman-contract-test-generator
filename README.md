@@ -208,8 +208,8 @@ responses:
     $ref: `#/components/responses/Created`
     x-postman-variables:
       - type: save
-        name: bookId
-        path: .id
+        name: userAccount
+        path: .account
 ```
 
 `type` - Must be *save* in order to save the value to a collection variable
@@ -224,17 +224,22 @@ The extension must be added to a parameter for consumption. This could be a head
 ```yaml
 parameters:
   bookId:
-      name: bookId
+      name: accountId
       in: path
-      description: Unique identifier for the book
+      description: Unique identifier for the account
       required: true
       schema:
         type: string
         example: 23SovYJfRZ5Wt7jpZEPHVo
       x-postman-variables:
         - type: load
-          name: bookId
+          name: account
+          path: '[0].id'
 ```
+
+`type` - Must be *load* in order to load the value from a collection variable
+`name` - The name of the collection variable to be loaded
+`path` - (Optional) Javascript path to the parsed property you want. Unlike saving a property from a response, loading supports arrays.
 
 Whenever this parameter is used, the test generator will load the value from the collection variable. If the collection variable does not exist or has no value, it will fall back to the provided example.
 
