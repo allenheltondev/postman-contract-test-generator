@@ -1050,7 +1050,7 @@
 									"        if(variable && pm.collectionVariables.has(variable.name)){\r",
 									"            if(variable.path){\r",
 									"                commandString = `pm.collectionVariables.get(variable.name)${variable.path}`;\r",
-									"                parameterValue = eval(cammandString);\r",
+									"                parameterValue = eval(commandString);\r",
 									"            } else {\r",
 									"                parameterValue = pm.collectionVariables.get(variable.name);\r",
 									"            }\r",
