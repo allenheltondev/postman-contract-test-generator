@@ -693,6 +693,7 @@
 									"let schemaTests = [];    \r",
 									"for(let prop in schema.paths){\r",
 									"    const pathName = prop;    \r",
+									"    currentPath.parameters = pathMethod.parameters;    \r",
 									"    let path = {\r",
 									"        path: `${pm.collectionVariables.get('coll-baseUrl')}${pathName}`,\r",
 									"        parameters: schema.paths[prop].parameters,        \r",
