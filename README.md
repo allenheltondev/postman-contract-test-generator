@@ -208,8 +208,8 @@ responses:
     $ref: `#/components/responses/Created`
     x-postman-variables:
       - type: save
-        name: userAccount
-        path: .account
+        name: bookId
+        path: .id
 ```
 
 `type` - Must be *save* in order to save the value to a collection variable
@@ -224,16 +224,16 @@ The extension must be added to a parameter for consumption. This could be a head
 ```yaml
 parameters:
   bookId:
-      name: accountId
+      name: bookId
       in: path
-      description: Unique identifier for the account
+      description: Unique identifier for the book
       required: true
       schema:
         type: string
         example: 23SovYJfRZ5Wt7jpZEPHVo
       x-postman-variables:
         - type: load
-          name: account
+          name: bookArray
           path: '[0].id'
 ```
 
