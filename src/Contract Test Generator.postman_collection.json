@@ -439,7 +439,7 @@
 									"pm.test('Schema has server/baseUrl defined', function () {\r",
 									"    const servers = schema.servers;\r",
 									"    pm.expect(servers).to.not.be.undefined;\r",
-									"    const serverToTest = servers.find(s => s.url.toLowerCase() == server.toLowerCase());\r",
+									"    const serverToTest = servers.find(s => s.description.toLowerCase() == server.toLowerCase());\r",
 									"    pm.expect(serverToTest).to.not.be.undefined;\r",
 									"\r",
 									"    pm.expect(serverToTest).to.have.property('url');\r",
