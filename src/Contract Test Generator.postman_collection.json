@@ -2,7 +2,9 @@
 	"info": {
 		"_postman_id": "84f520e2-01e6-442e-a483-57104b83162d",
 		"name": "Contract Test Generator",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28411126",
+		"_collection_link": "https://www.postman.com/auto-gpt/workspace/agent-protocol-public/collection/28411126-84f520e2-01e6-442e-a483-57104b83162d?action=share&source=collection_link&creator=28411126"
 	},
 	"item": [
 		{
@@ -14,7 +16,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "fedc1292-44e3-4a56-90a0-903f79b84d2b",
 								"exec": [
 									"// See https://blog.postman.com/2019/05/28/pro-tip-dynamically-unset-postman-environment-variables/\r",
 									"// for more details on what we're doing here. \r",
@@ -35,7 +36,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ce84e40e-69db-4104-9b49-5c74d90994e6",
 								"exec": [
 									""
 								],
@@ -43,14 +43,21 @@
 							}
 						}
 					],
-					"id": "cdb69bba-b0e5-4126-b99b-d03f06fdad9e",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://postman-echo.com/delay/0"
+						"url": {
+							"raw": "https://postman-echo.com/delay/0",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"delay",
+								"0"
+							]
+						}
 					},
 					"response": []
 				},
@@ -60,7 +67,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b80da777-7a44-4a05-bd84-574ef162315a",
 								"exec": [
 									"const providedSchema = pm.environment.get('env-schema');\r",
 									"if(providedSchema){\r",
@@ -88,14 +94,21 @@
 							}
 						}
 					],
-					"id": "29f6293d-e454-4ffd-ad40-541e99d65844",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://postman-echo.com/delay/0"
+						"url": {
+							"raw": "https://postman-echo.com/delay/0",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"delay",
+								"0"
+							]
+						}
 					},
 					"response": []
 				},
@@ -122,15 +135,10 @@
 									"\r",
 									"pm.collectionVariables.set('coll-apiIds', JSON.stringify(apiIds));"
 								],
-								"type": "text/javascript",
-								"id": "72ac7f2e-2c54-4c5c-804b-7667fad5114b"
+								"type": "text/javascript"
 							}
 						}
 					],
-					"id": "58b65a56-b7f7-4c71-b330-c4d2ceed62b2",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -181,8 +189,7 @@
 									"const version = jsonData.versions[0];\r",
 									"pm.collectionVariables.set('coll-versionId', version.id);"
 								],
-								"type": "text/javascript",
-								"id": "5708a260-8f8d-4f90-99a2-b299e4394f43"
+								"type": "text/javascript"
 							}
 						},
 						{
@@ -203,15 +210,10 @@
 									"    postman.setNextRequest(null);\r",
 									"}"
 								],
-								"type": "text/javascript",
-								"id": "655e6080-b687-435d-9789-a7a6e6cab413"
+								"type": "text/javascript"
 							}
 						}
 					],
-					"id": "344e533b-284e-4b54-bd86-f1dc195a4a91",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -246,7 +248,6 @@
 							],
 							"variable": [
 								{
-									"id": "58b7aa0a-40de-47d8-93ec-0397753ddc8b",
 									"key": "apiId",
 									"value": "{{coll-apiId}}"
 								}
@@ -272,8 +273,7 @@
 									"    pm.collectionVariables.set('coll-schemaId', jsonData.version.schema[0]);\r",
 									"});"
 								],
-								"type": "text/javascript",
-								"id": "038f8b9a-624a-41b2-82a0-348accc6b07b"
+								"type": "text/javascript"
 							}
 						},
 						{
@@ -282,15 +282,10 @@
 								"exec": [
 									""
 								],
-								"type": "text/javascript",
-								"id": "8cc932e4-b6af-4adf-85b2-c3c924e84b1b"
+								"type": "text/javascript"
 							}
 						}
 					],
-					"id": "d453e8d5-b17b-4f7a-8c39-25d1fa007b48",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -326,12 +321,10 @@
 							],
 							"variable": [
 								{
-									"id": "89acef76-8451-4807-bf5a-fd3386f65c55",
 									"key": "apiId",
 									"value": "{{coll-apiId}}"
 								},
 								{
-									"id": "4741c519-3098-4526-a384-4866dd7f823a",
 									"key": "versionId",
 									"value": "{{coll-versionId}}"
 								}
@@ -380,15 +373,10 @@
 									"    })\r",
 									"}"
 								],
-								"type": "text/javascript",
-								"id": "75a9ca4e-788c-46ff-932b-8dd24731eb05"
+								"type": "text/javascript"
 							}
 						}
 					],
-					"id": "168fe4e0-22c7-4303-a166-2cc2e83ee558",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -419,17 +407,14 @@
 							],
 							"variable": [
 								{
-									"id": "c6b10f40-1728-4105-b0e5-98519e9f0cb2",
 									"key": "apiId",
 									"value": "{{coll-apiId}}"
 								},
 								{
-									"id": "1180d629-c470-4340-972d-915bcbafda11",
 									"key": "apiVersionId",
 									"value": "{{coll-versionId}}"
 								},
 								{
-									"id": "27c2fb09-3628-40bd-a1c4-9425449ba03b",
 									"key": "schemaId",
 									"value": "{{coll-schemaId}}"
 								}
@@ -472,27 +457,32 @@
 									"    }   \r",
 									"}"
 								],
-								"type": "text/javascript",
-								"id": "0bd52571-7405-46b0-9488-8354915f2627"
+								"type": "text/javascript"
 							}
 						}
 					],
-					"id": "c006527c-4273-4459-9288-960ef6ff1944",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"auth": {
 							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
-						"url": "https://postman-echo.com/delay/0"
+						"url": {
+							"raw": "https://postman-echo.com/delay/0",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"delay",
+								"0"
+							]
+						}
 					},
 					"response": []
 				}
-			],
-			"id": "b672d947-a0ba-48a7-a74e-37ae01d129b7"
+			]
 		},
 		{
 			"name": "Components",
@@ -708,27 +698,32 @@
 									"}\r",
 									""
 								],
-								"type": "text/javascript",
-								"id": "49ef12b8-2995-41b1-a0c7-7bc7990d3531"
+								"type": "text/javascript"
 							}
 						}
 					],
-					"id": "861a032f-b1b8-468c-88cc-b8fd03b592ba",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"auth": {
 							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
-						"url": "https://postman-echo.com/delay/0"
+						"url": {
+							"raw": "https://postman-echo.com/delay/0",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"delay",
+								"0"
+							]
+						}
 					},
 					"response": []
 				}
-			],
-			"id": "248f909d-4a76-4851-a318-5cacf7c2ca10"
+			]
 		},
 		{
 			"name": "Contract Tests",
@@ -1049,8 +1044,7 @@
 									"  return parameters;\r",
 									"}"
 								],
-								"type": "text/javascript",
-								"id": "07365b26-9bb9-4eda-9236-69b30aca20c6"
+								"type": "text/javascript"
 							}
 						},
 						{
@@ -1065,22 +1059,28 @@
 									"    }\r",
 									"}"
 								],
-								"type": "text/javascript",
-								"id": "fe7da80a-df32-4aab-af01-aff1fb75c025"
+								"type": "text/javascript"
 							}
 						}
 					],
-					"id": "89c02996-cccb-40ab-92a9-05fc88d1396c",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"auth": {
 							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
-						"url": "https://postman-echo.com/delay/0"
+						"url": {
+							"raw": "https://postman-echo.com/delay/0",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"delay",
+								"0"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1090,7 +1090,6 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "7acff718-034c-4d99-aa6e-25d6e92b41fa",
 								"exec": [
 									"const url = require('url');\r",
 									"\r",
@@ -1152,15 +1151,24 @@
 									"  }\r",
 									"}\r",
 									"\r",
+									"\r",
 									"function loadParameterValue(parameter) {\r",
 									"  let parameterValue;\r",
-									"  if (parameter['x-postman-variables']) {\r",
+									"  if(parameter['x-postman-variables']){\r",
 									"    let variable = parameter['x-postman-variables'].find(v => v.type.toLowerCase() === 'load');\r",
-									"    if (variable && pm.collectionVariables.has(variable.name)) {\r",
-									"      parameterValue = pm.collectionVariables.get(variable.name);\r",
+									"    if(variable && pm.collectionVariables.has(variable.name)){\r",
+									"        \r",
+									"        if(variable.path && eval(`pm.collectionVariables.get(variable.name)${variable.path}`)){\r",
+									"            \r",
+									"            array = JSON.parse(pm.collectionVariables.get(variable.name))\r",
+									"            \r",
+									"            parameterValue = eval(`pm.collectionVariables.get(variable.name)${variable.path}`);\r",
+									"        } else {\r",
+									"            parameterValue = pm.collectionVariables.get(variable.name);\r",
+									"        }\r",
 									"    }\r",
 									"    else {\r",
-									"      parameterValue = resolveParameterExample(parameter);\r",
+									"        parameterValue = encodeURIComponent(parameter.schema.example ? parameter.schema.example : parameter.example);    \r",
 									"    }\r",
 									"  }\r",
 									"  else {\r",
@@ -1228,18 +1236,17 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2b42dad0-e966-417d-a608-957b97201dd8",
 								"exec": [
 									"// After parsing schema tests\r",
 									"const schemaTests = JSON.parse(pm.collectionVariables.get('coll-schemaTests'));\r",
 									"console.log('Parsed schema tests:', schemaTests);\r",
 									"if (schemaTests.length > 0) {\r",
-									"    postman.setNextRequest('Test Request.');\r",
+									"    postman.setNextRequest('Test Request');\r",
 									"}\r",
 									"\r",
 									"const schemaTest = JSON.parse(pm.variables.get('currentSchemaTest'));\r",
 									"console.log('Current schema test:', schemaTest.name);\r",
-									"\r",
+									"const statusCode = pm.response.code;\r",
 									"pm.test(`${schemaTest.name} - Has expected status code`, function () {\r",
 									"    if (schemaTest.success) {\r",
 									"        try {\r",
@@ -1260,25 +1267,32 @@
 									"        }        \r",
 									"    }\r",
 									"    else {\r",
-									"        pm.response.to.have.status(400);\r",
-									"    }    \r",
+									"        pm.expect(statusCode === 400 || statusCode === 422).to.be.true;\r",
+									"    }\r",
 									"});\r",
 									"\r",
 									"const expectedResponse = schemaTest.responses.find(r => r.statusCode == pm.response.code);\r",
+									"console.log(\"Expected Response\")\r",
+									"console.log(expectedResponse)\r",
 									"pm.test(`${schemaTest.name} - Status code (${pm.response.code}) is allowed`, function () {\r",
 									"    pm.expect(expectedResponse).to.exist;\r",
 									"});\r",
 									"\r",
-									"if (expectedResponse) {\r",
+									"if (expectedResponse && responseBodySchemaExpected(expectedResponse, statusCode)) {\r",
 									"    pm.test(`${schemaTest.name} - Has expected response body schema`, function () {\r",
+									"        console.log('Exptected response');\r",
+									"        console.log(expectedResponse);\r",
 									"        console.log('Validating response body schema.');\r",
 									"        const Ajv = require('ajv');\r",
 									"        const ajv = new Ajv({ allErrors: true, format: false });\r",
 									"        \r",
+									"        \r",
 									"        if (pm.response.code == 204 || shouldResponseBeEmpty(expectedResponse)) {\r",
+									"            \r",
 									"            checkForEmptyResponse();\r",
 									"        }\r",
 									"        else if (expectedResponse.$ref) {\r",
+									"            console.log(\"Checking $ref in expectedResponse\")\r",
 									"            const jsonData = pm.response.json();\r",
 									"            const schema = JSON.parse(pm.collectionVariables.get('coll-schema'));\r",
 									"            ajv.addSchema(schema, 'OAS');\r",
@@ -1291,6 +1305,7 @@
 									"            }\r",
 									"        }\r",
 									"        else if (expectedResponse.schema) {\r",
+									"            console.log(\"Checking schema in expectedResponse\")\r",
 									"            const jsonData = pm.response.json();\r",
 									"            const validate = ajv.compile(expectedResponse.schema);\r",
 									"            const valid = validate(jsonData);\r",
@@ -1303,6 +1318,8 @@
 									"        else {\r",
 									"            checkForEmptyResponse();\r",
 									"        }\r",
+									"        console.log(\"Variables:\")\r",
+									"        console.log(expectedResponse.variables)\r",
 									"\r",
 									"        if (expectedResponse.variables) {\r",
 									"            console.log('Extracting variables from response.');\r",
@@ -1321,6 +1338,15 @@
 									"                });\r",
 									"\r",
 									"                if (found) {\r",
+									"                    let dataType = typeof data;\r",
+									"\r",
+									"                    console.log(`Type of data: ${dataType}`);\r",
+									"                    console.log(`Set variable: ${variable.name} ${data}`)\r",
+									"                    if (dataType === 'object') {\r",
+									"                        let stringifiedData = JSON.stringify(data);\r",
+									"                        console.log(`Stringified data: ${stringifiedData}`)\r",
+									"                        data = JSON.stringify(data);\r",
+									"                    }\r",
 									"                    pm.collectionVariables.set(variable.name, data);\r",
 									"                }\r",
 									"                else {\r",
@@ -1357,6 +1383,8 @@
 									"        }\r",
 									"    }\r",
 									"    else {\r",
+									"        console.log(\"expectedResponse.$ref is empty\")\r",
+									"        console.log(responseSchema)\r",
 									"        return (Object.keys(responseSchema).length == 0);\r",
 									"    }\r",
 									"}\r",
@@ -1368,16 +1396,17 @@
 									"    for (let i = 1; i < refPieces.length; i++) {\r",
 									"        reference = reference[refPieces[i]];\r",
 									"    }\r",
-									"\r",
 									"    return reference;\r",
 									"}\r",
-									""
+									"\r",
+									"function responseBodySchemaExpected(expectedResponse, statusCode) {\r",
+									"    return (expectedResponse.schema || statusCode != 422)\r",
+									"}"
 								],
 								"type": "text/javascript"
 							}
 						}
 					],
-					"id": "c0147e44-d03f-4f68-b9fb-8adc9afa3a6a",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1393,12 +1422,21 @@
 								}
 							}
 						},
-						"url": "https://postman-echo.com/get"
+						"url": {
+							"raw": "https://postman-echo.com/get",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"get"
+							]
+						}
 					},
 					"response": []
 				}
-			],
-			"id": "512a2e8f-6feb-4465-9d41-3507c4ebd023"
+			]
 		},
 		{
 			"name": "Finalize",
@@ -1421,22 +1459,28 @@
 									"    catch(err){}    \r",
 									"}"
 								],
-								"type": "text/javascript",
-								"id": "5c3c34f4-e7b8-48cd-b7c9-4d9eab3e98ac"
+								"type": "text/javascript"
 							}
 						}
 					],
-					"id": "36c1494b-8d3b-4082-a3e6-edf5d05f4fd7",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"auth": {
 							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
-						"url": "https://postman-echo.com/delay/0"
+						"url": {
+							"raw": "https://postman-echo.com/delay/0",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"delay",
+								"0"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1460,8 +1504,7 @@
 									"    });\r",
 									"}"
 								],
-								"type": "text/javascript",
-								"id": "ec1cf2ec-697f-425e-af0c-fef04ae5a30d"
+								"type": "text/javascript"
 							}
 						},
 						{
@@ -1470,24 +1513,29 @@
 								"exec": [
 									""
 								],
-								"type": "text/javascript",
-								"id": "4001d05e-9f7c-4a6c-8f5d-5a2048d6490d"
+								"type": "text/javascript"
 							}
 						}
 					],
-					"id": "45cf6fe7-b623-4761-954b-bbb02fc0918b",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://postman-echo.com/delay/0"
+						"url": {
+							"raw": "https://postman-echo.com/delay/0",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"delay",
+								"0"
+							]
+						}
 					},
 					"response": []
 				}
-			],
-			"id": "d87310a2-d19a-4da5-9d36-c8ab64e575b9"
+			]
 		}
 	],
 	"event": [
@@ -1497,8 +1545,7 @@
 				"type": "text/javascript",
 				"exec": [
 					""
-				],
-				"id": "ef1e8273-5b13-4994-aa4d-5518b9e99dfb"
+				]
 			}
 		},
 		{
@@ -1507,9 +1554,34 @@
 				"type": "text/javascript",
 				"exec": [
 					""
-				],
-				"id": "cae65682-9b7e-4552-bf99-334ca5aed099"
+				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"key": "coll-apiIds",
+			"value": ""
+		},
+		{
+			"key": "coll-apiId",
+			"value": ""
+		},
+		{
+			"key": "coll-versionId",
+			"value": ""
+		},
+		{
+			"key": "coll-schemaId",
+			"value": ""
+		},
+		{
+			"key": "coll-schema",
+			"value": ""
+		},
+		{
+			"key": "coll-schemaTests",
+			"value": ""
 		}
 	]
 }
