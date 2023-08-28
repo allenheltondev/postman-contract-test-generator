@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "c14bffaf-8021-43d5-8480-d7bb55f6fe62",
+		"_postman_id": "03c5c4b6-9071-4ab4-b5a1-4bda97a3b3aa",
 		"name": "Contract Test Generator",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "7116055"
+		"_exporter_id": "28411126",
+		"_collection_link": "https://www.postman.com/auto-gpt/workspace/agent-protocol-public/collection/28411126-03c5c4b6-9071-4ab4-b5a1-4bda97a3b3aa?action=share&source=collection_link&creator=28411126"
 	},
 	"item": [
 		{
@@ -67,7 +68,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const providedSchema = pm.environment.get('env-schema');\r",
+									"var envSchema = null\r",
+									"if (pm.environment.get(\"env-openapi-json-url\")){\r",
+									"    envSchema = JSON.stringify(pm.response.json());\r",
+									"}\r",
+									"\r",
+									"const providedSchema = pm.environment.get('env-schema') || envSchema;\r",
 									"if(providedSchema){\r",
 									"    let success = true;\r",
 									"    try{\r",
@@ -76,7 +82,7 @@
 									"\r",
 									"        const schema = jsyaml.load(providedSchema);\r",
 									"        pm.collectionVariables.set('coll-schema', JSON.stringify(schema));\r",
-									"        postman.setNextRequest('Verify Component Adherence');\r",
+									"        postman.setNextRequest('Get API Base Url');\r",
 									"    }\r",
 									"    catch(err){\r",
 									"        console.log(err);\r",
@@ -87,6 +93,17 @@
 									"    pm.test('Successfully converted provided schema', function(){\r",
 									"        pm.expect(success).to.be.true;\r",
 									"    });    \r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (pm.environment.get(\"env-openapi-json-url\")){",
+									"    pm.request.url = pm.environment.get(\"env-openapi-json-url\");",
 									"}"
 								],
 								"type": "text/javascript"
@@ -341,14 +358,12 @@
 								"exec": [
 									"try {\r",
 									"    const jsonData = pm.response.json();\r",
-									"\r",
 									"    if(jsonData.schema.language.toLowerCase() == 'json'){\r",
 									"        pm.test('Schema is JSON', function(){\r",
 									"            pm.expect(1).to.equal(1);\r",
 									"            pm.collectionVariables.set('coll-schema', jsonData.schema.schema);\r",
 									"        });\r",
-									"    }\r",
-									"    else {\r",
+									"    } else {\r",
 									"        pm.test('Schema translates to JSON', function(){\r",
 									"            try{\r",
 									"                const yaml = pm.environment.get('env-jsonToYaml');\r",
@@ -371,6 +386,18 @@
 									"        postman.setNextRequest(null);\r",
 									"    })\r",
 									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (pm.environment.get(\"env-openapi-json-url\")){",
+									"    pm.request.url = pm.environment.get(\"env-openapi-json-url\");",
+									"}",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -1259,7 +1286,8 @@
 									"        }        \r",
 									"    }\r",
 									"    else {\r",
-									"        pm.response.to.have.status(400);\r",
+									"        const statusCode = pm.response.code\r",
+									"        pm.expect(statusCode === 400 || statusCode === 422).to.be.true;\r",
 									"    }    \r",
 									"});\r",
 									"\r",
@@ -1271,7 +1299,7 @@
 									"if(expectedResponse){\r",
 									"    pm.test(`${schemaTest.name} - Has expected response body schema`, function(){\r",
 									"        const Ajv = require('ajv');\r",
-									"        const ajv = new Ajv({allErrors: true,format: false});\r",
+									"        const ajv = new Ajv({allErrors: true,format: false,nullable: true});\r",
 									"        \r",
 									"        if(pm.response.code == 204 || shouldResponseBeEmpty(expectedResponse)){\r",
 									"            checkForEmptyResponse();\r",
@@ -1280,7 +1308,6 @@
 									"            const jsonData = pm.response.json();\r",
 									"            const schema = JSON.parse(pm.collectionVariables.get('coll-schema'));\r",
 									"            ajv.addSchema(schema, 'OAS');\r",
-									"            \r",
 									"            const valid = ajv.validate({$ref: `OAS${expectedResponse.$ref}`}, jsonData);\r",
 									"            const errors = ajv.errorsText(valid.errors);\r",
 									"            pm.expect(errors).to.equal('No errors');\r",
@@ -1356,14 +1383,14 @@
 									"    }\r",
 									"}\r",
 									"\r",
-									"function getSchemaReference(schema, referenceName){  \r",
+									"function getSchemaReference(schema, referenceName){\r",
 									"  const refPieces = referenceName.split('/');\r",
 									"  let reference = schema;\r",
 									"  for(let i = 1; i < refPieces.length; i++){\r",
 									"    reference = reference[refPieces[i]];\r",
 									"  }\r",
 									"\r",
-									"  return reference;  \r",
+									"  return reference;\r",
 									"}"
 								],
 								"type": "text/javascript"
@@ -1519,32 +1546,6 @@
 					""
 				]
 			}
-		}
-	],
-	"variable": [
-		{
-			"key": "coll-apiIds",
-			"value": ""
-		},
-		{
-			"key": "coll-apiId",
-			"value": ""
-		},
-		{
-			"key": "coll-versionId",
-			"value": ""
-		},
-		{
-			"key": "coll-schemaId",
-			"value": ""
-		},
-		{
-			"key": "coll-schema",
-			"value": ""
-		},
-		{
-			"key": "coll-schemaTests",
-			"value": ""
 		}
 	]
 }
