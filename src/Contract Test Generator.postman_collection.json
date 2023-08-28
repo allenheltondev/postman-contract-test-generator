@@ -1533,5 +1533,32 @@
 				]
 			}
 		}
+	],
+	],
+	"variable": [
+		{
+			"key": "coll-apiIds",
+			"value": ""
+		},
+		{
+			"key": "coll-apiId",
+			"value": ""
+		},
+		{
+			"key": "coll-versionId",
+			"value": ""
+		},
+		{
+			"key": "coll-schemaId",
+			"value": ""
+		},
+		{
+			"key": "coll-schema",
+			"value": ""
+		},
+		{
+			"key": "coll-schemaTests",
+			"value": ""
+		}
 	]
 }
