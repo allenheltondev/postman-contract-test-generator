@@ -68,6 +68,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"if (pm.environment.get(\"env-openapi-url\")){\r",
+									"    console.log(pm.environment.get(\"env-openapi-url\"));\r",
+									"    pm.sendRequest(pm.environment.get(\"env-openapi-url\"), function (err, response) {\r",
+									"        pm.environment.set('env-schema', JSON.stringify(response.json()));\r",
+									"    });\r",
+									"}\r",
 									"const providedSchema = pm.environment.get('env-schema');\r",
 									"if(providedSchema){\r",
 									"    let success = true;\r",
@@ -77,7 +83,7 @@
 									"\r",
 									"        const schema = jsyaml.load(providedSchema);\r",
 									"        pm.collectionVariables.set('coll-schema', JSON.stringify(schema));\r",
-									"        postman.setNextRequest('Verify Component Adherence');\r",
+									"        postman.setNextRequest('Get API Base Url');\r",
 									"    }\r",
 									"    catch(err){\r",
 									"        console.log(err);\r",
@@ -1532,32 +1538,6 @@
 					""
 				]
 			}
-		}
-	],
-	"variable": [
-		{
-			"key": "coll-apiIds",
-			"value": ""
-		},
-		{
-			"key": "coll-apiId",
-			"value": ""
-		},
-		{
-			"key": "coll-versionId",
-			"value": ""
-		},
-		{
-			"key": "coll-schemaId",
-			"value": ""
-		},
-		{
-			"key": "coll-schema",
-			"value": ""
-		},
-		{
-			"key": "coll-schemaTests",
-			"value": ""
 		}
 	]
 }
