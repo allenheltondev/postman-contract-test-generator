@@ -68,13 +68,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"console.log(\"ok\");",
+									"var envSchema = null\r",
 									"if (pm.environment.get(\"env-openapi-json-url\")){\r",
-									"    pm.sendRequest(pm.environment.get(\"env-openapi-json-url\"), function (err, response) {\r",
-									"        pm.environment.set('env-schema', JSON.stringify(response.json()));\r",
-									"    });\r",
+									"    envSchema = JSON.stringify(pm.response.json());\r",
 									"}\r",
-									"const providedSchema = pm.environment.get('env-schema');\r",
+									"\r",
+									"const providedSchema = pm.environment.get('env-schema') || envSchema;\r",
 									"if(providedSchema){\r",
 									"    let success = true;\r",
 									"    try{\r",
@@ -94,6 +93,17 @@
 									"    pm.test('Successfully converted provided schema', function(){\r",
 									"        pm.expect(success).to.be.true;\r",
 									"    });    \r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (pm.environment.get(\"env-openapi-json-url\")){",
+									"    pm.request.url = pm.environment.get(\"env-openapi-json-url\");",
 									"}"
 								],
 								"type": "text/javascript"
