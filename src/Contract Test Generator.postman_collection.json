@@ -68,9 +68,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"if (pm.environment.get(\"env-openapi-url\")){\r",
-									"    console.log(pm.environment.get(\"env-openapi-url\"));\r",
-									"    pm.sendRequest(pm.environment.get(\"env-openapi-url\"), function (err, response) {\r",
+									"if (pm.environment.get(\"env-openapi-json-url\")){\r",
+									"    pm.sendRequest(pm.environment.get(\"env-openapi-json-url\"), function (err, response) {\r",
 									"        pm.environment.set('env-schema', JSON.stringify(response.json()));\r",
 									"    });\r",
 									"}\r",
@@ -348,9 +347,7 @@
 								"exec": [
 									"try {\r",
 									"    const jsonData = pm.response.json();\r",
-									"    if (pm.environment.get(\"env-openapi-json-url\")){\r",
-									"        pm.collectionVariables.set('coll-schema', JSON.stringify(jsonData));\r",
-									"    } else if(jsonData.schema.language.toLowerCase() == 'json'){\r",
+									"    if(jsonData.schema.language.toLowerCase() == 'json'){\r",
 									"        pm.test('Schema is JSON', function(){\r",
 									"            pm.expect(1).to.equal(1);\r",
 									"            pm.collectionVariables.set('coll-schema', jsonData.schema.schema);\r",
