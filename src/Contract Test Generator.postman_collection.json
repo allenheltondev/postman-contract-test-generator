@@ -1294,7 +1294,6 @@
 									"            const jsonData = pm.response.json();\r",
 									"            const schema = JSON.parse(pm.collectionVariables.get('coll-schema'));\r",
 									"            ajv.addSchema(schema, 'OAS');\r",
-									"            console.log(schema);\r",
 									"            const valid = ajv.validate({$ref: `OAS${expectedResponse.$ref}`}, jsonData);\r",
 									"            const errors = ajv.errorsText(valid.errors);\r",
 									"            pm.expect(errors).to.equal('No errors');\r",
