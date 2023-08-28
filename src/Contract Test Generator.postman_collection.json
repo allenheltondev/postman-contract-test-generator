@@ -68,7 +68,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"console.log("ok);",
+									"console.log(\"ok\");",
 									"if (pm.environment.get(\"env-openapi-json-url\")){\r",
 									"    pm.sendRequest(pm.environment.get(\"env-openapi-json-url\"), function (err, response) {\r",
 									"        pm.environment.set('env-schema', JSON.stringify(response.json()));\r",
