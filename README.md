@@ -233,8 +233,13 @@ parameters:
         example: 23SovYJfRZ5Wt7jpZEPHVo
       x-postman-variables:
         - type: load
-          name: bookId
+          name: bookArray
+          path: '[0].id'
 ```
+
+`type` - Must be *load* in order to load the value from a collection variable
+`name` - The name of the collection variable to be loaded
+`path` - (Optional) Javascript path to the parsed property you want. Unlike saving a property from a response, loading supports arrays.
 
 Whenever this parameter is used, the test generator will load the value from the collection variable. If the collection variable does not exist or has no value, it will fall back to the provided example.
 
