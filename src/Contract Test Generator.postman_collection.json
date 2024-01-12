@@ -62,6 +62,64 @@
 					"response": []
 				},
 				{
+					"name": "Load openapi spec from file",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const yamlFile = pm.environment.get(\"env-openapi-yaml\");\r",
+									"if (yamlFile){\r",
+									"    let success = true;\r",
+									"    try{\r",
+									"        const yaml = pm.environment.get('env-jsonToYaml');\r",
+									"        (new Function(yaml))();\r",
+									"        const schema = jsyaml.load(yamlFile);\r",
+									"        const schemaAsJson = JSON.stringify(schema);\r",
+									"        pm.collectionVariables.set('coll-schema', schemaAsJson);\r",
+									"        postman.setNextRequest('Get API Base Url');\r",
+									"    } catch(err){\r",
+									"        console.log(err);\r",
+									"        success = false;\r",
+									"        postman.setNextRequest(null);\r",
+									"    }\r",
+									"    pm.test('Successfully loaded provided schema from file path', function(){\r",
+									"        pm.expect(success).to.be.true;\r",
+									"    });\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://postman-echo.com/delay/0",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"delay",
+								"0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Initialize",
 					"event": [
 						{
@@ -73,7 +131,7 @@
 									"    envSchema = JSON.stringify(pm.response.json());\r",
 									"}\r",
 									"\r",
-									"const providedSchema = pm.environment.get('env-schema') || envSchema;\r",
+									"const providedSchema = pm.environment.get('env-schema') || envSchema;\r",
 									"if(providedSchema){\r",
 									"    let success = true;\r",
 									"    try{\r",
@@ -92,7 +150,7 @@
 									"\r",
 									"    pm.test('Successfully converted provided schema', function(){\r",
 									"        pm.expect(success).to.be.true;\r",
-									"    });    \r",
+									"    });\r",
 									"}"
 								],
 								"type": "text/javascript"
@@ -1046,8 +1104,8 @@
 									"\r",
 									"function isMockEndpoint(pathMethod) {\r",
 									"  let isMock = false;\r",
-									"  if (pathMethod && pathMethod['x-amazon-apigateway-integration'] && pathMethod['x-amazon-apigateway-integration'].type\r",
-									"    && pathMethod['x-amazon-apigateway-integration'].type.toLowerCase() == 'mock') {\r",
+									"  if (pathMethod && (pathMethod['x-skip-test'] === true || (pathMethod['x-amazon-apigateway-integration'] && pathMethod['x-amazon-apigateway-integration'].type\r",
+									"    && pathMethod['x-amazon-apigateway-integration'].type.toLowerCase() == 'mock'))) {\r",
 									"    isMock = true;\r",
 									"  }\r",
 									"\r",
@@ -1310,20 +1368,20 @@
 									"            ajv.addSchema(schema, 'OAS');\r",
 									"            const valid = ajv.validate({$ref: `OAS${expectedResponse.$ref}`}, jsonData);\r",
 									"            const errors = ajv.errorsText(valid.errors);\r",
-									"            pm.expect(errors).to.equal('No errors');\r",
 									"            if(errors !== 'No errors'){\r",
 									"                console.log(errors);\r",
 									"            }\r",
+									"            pm.expect(errors).to.equal('No errors');\r",
 									"        }\r",
 									"        else if(expectedResponse.schema){\r",
 									"            const jsonData = pm.response.json();\r",
 									"            const validate = ajv.compile(expectedResponse.schema);\r",
-									"            const valid = validate(jsonData);\r",
-									"            const errors = ajv.errorsText(valid.errors);\r",
-									"            pm.expect(errors).to.equal('No errors');\r",
+									"            validate(jsonData);\r",
+									"            const errors = ajv.errorsText(validate.errors);\r",
 									"            if(errors !== 'No errors'){\r",
 									"                console.log(errors);\r",
 									"            }\r",
+									"            pm.expect(errors).to.equal('No errors');\r",
 									"        }\r",
 									"        else {\r",
 									"            checkForEmptyResponse();\r",
